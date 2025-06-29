@@ -58,8 +58,6 @@ export class SpotifyPublicService {
   async searchAlbums(query: string, limit = 20, offset = 0): Promise<SpotifySearchResponse> {
     const token = await this.getAccessToken();
     
-    const fetchLimit = Math.min(limit * 2, 50);
-    
     const response = await axios.get('https://api.spotify.com/v1/search', {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -67,41 +65,13 @@ export class SpotifyPublicService {
       params: {
         q: query,
         type: 'album',
-        limit: fetchLimit,
+        limit,
         offset,
         market: 'JP', // 日本のマーケットに限定（オプション）
       },
     });
 
-    // アーティストの詳細情報を取得してpopularityでフィルター
-    const albums = response.data.albums.items;
-    const enhancedAlbums = await Promise.all(
-      albums.map(async (album: any) => {
-        try {
-          const artistDetails = await Promise.all(
-            album.artists.map(async (artist: any) => {
-              const artistResponse = await axios.get(`https://api.spotify.com/v1/artists/${artist.id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              return { ...artist, popularity: artistResponse.data.popularity };
-            })
-          );
-          return { ...album, artists: artistDetails };
-        } catch (error) {
-          return album;
-        }
-      })
-    );
-
-    const filteredAlbums = this.filterByPopularity(enhancedAlbums, 30);
-    
-    return {
-      ...response.data,
-      albums: {
-        ...response.data.albums,
-        items: filteredAlbums.slice(0, limit)
-      }
-    };
+    return response.data;
   }
 
   async getAlbum(albumId: string): Promise<SpotifyAlbum> {
