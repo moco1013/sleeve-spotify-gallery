@@ -20,6 +20,7 @@ const PORT = process.env.PORT || 8080;
 const allowedOrigins = process.env.NODE_ENV === 'production' 
   ? [
       'https://sleeve-spotify-gallery.vercel.app',
+      'https://sleeve-spotify-gallery-mocomegane.vercel.app',
       'https://sleeve-spotify-gallery-rgzg3q4z2-mocomegane.vercel.app',
       'https://sleeve-spotify-gallery-git-main-mocomegane.vercel.app'
     ]
