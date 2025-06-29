@@ -126,6 +126,16 @@ export class SpotifyPublicService {
       
       console.log('✅ Spotify API response received, albums count:', response.data.albums.items.length);
 
+      // 一時的にpopularityフィルターを無効化してテスト
+      return {
+        ...response.data,
+        albums: {
+          ...response.data.albums,
+          items: response.data.albums.items.slice(0, limit)
+        }
+      };
+
+      /* 
       // アーティストのpopularityデータを取得するため、各アルバムのアーティスト情報を詳細取得
       const albums = response.data.albums.items;
       console.log('🔍 Starting to enhance albums with artist details...');
@@ -166,6 +176,7 @@ export class SpotifyPublicService {
           items: filteredAlbums.slice(0, limit)
         }
       };
+      */
     } catch (error) {
       console.error('❌ Error in getNewReleases:', error);
       throw error;
