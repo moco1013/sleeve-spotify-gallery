@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 
 const SelectorContainer = styled.div`
@@ -25,8 +25,11 @@ const ThemeButton = styled.button<{ active: boolean }>`
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-align: center;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background: ${props => props.active 
@@ -34,6 +37,11 @@ const ThemeButton = styled.button<{ active: boolean }>`
       : 'rgba(255, 255, 255, 0.2)'};
     color: #fff;
     transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0px);
+    transition: all 0.1s ease;
   }
 `;
 
@@ -53,11 +61,19 @@ const MoodButton = styled.button<{ active: boolean }>`
   border-radius: 20px;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background: rgba(29, 185, 84, 0.2);
     color: #1ed760;
+  }
+
+  &:active {
+    transform: scale(0.98);
+    transition: all 0.1s ease;
   }
 `;
 
@@ -94,6 +110,17 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
   currentSubTheme, 
   onThemeChange 
 }) => {
+  const handleThemeClick = useCallback((themeId: string, subTheme?: string) => {
+    // イベントを即座に処理
+    onThemeChange(themeId, subTheme);
+  }, [onThemeChange]);
+
+  const handleButtonClick = useCallback((e: React.MouseEvent, themeId: string, subTheme?: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleThemeClick(themeId, subTheme);
+  }, [handleThemeClick]);
+
   return (
     <SelectorContainer>
       <SelectorGrid>
@@ -101,7 +128,8 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
           <ThemeButton
             key={theme.id}
             active={currentTheme === theme.id}
-            onClick={() => onThemeChange(theme.id)}
+            onClick={(e) => handleButtonClick(e, theme.id)}
+            onTouchStart={(e) => e.preventDefault()}
           >
             <span style={{ marginRight: '6px' }}>{theme.emoji}</span>
             {theme.label}
@@ -115,7 +143,8 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             <MoodButton
               key={genre}
               active={currentSubTheme === genre}
-              onClick={() => onThemeChange('genre', genre)}
+              onClick={(e) => handleButtonClick(e, 'genre', genre)}
+              onTouchStart={(e) => e.preventDefault()}
             >
               {genre}
             </MoodButton>
@@ -129,7 +158,8 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             <MoodButton
               key={mood.id}
               active={currentSubTheme === mood.id}
-              onClick={() => onThemeChange('mood', mood.id)}
+              onClick={(e) => handleButtonClick(e, 'mood', mood.id)}
+              onTouchStart={(e) => e.preventDefault()}
             >
               <span style={{ marginRight: '4px' }}>{mood.emoji}</span>
               {mood.label}
