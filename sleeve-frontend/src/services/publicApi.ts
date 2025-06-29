@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SpotifySearchResponse, SpotifyAlbum } from '../types';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:8080';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://sleeve-spotify-gallery-production.up.railway.app';
 console.log('API_BASE_URL:', API_BASE_URL);
 console.log('Environment variables:', process.env);
 
