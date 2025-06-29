@@ -30,14 +30,15 @@ const HeaderContent = styled.div`
 `;
 
 const Logo = styled.h1`
-  font-size: 2.8rem;
-  font-weight: 300;
+  font-family: 'Knewave', cursive;
+  font-size: 3.2rem;
+  font-weight: 400;
   background: linear-gradient(45deg, #1DB954, #1ed760, #ffffff);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 8px;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 `;
 
