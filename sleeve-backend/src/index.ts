@@ -18,7 +18,11 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? ['https://sleeve-frontend.vercel.app']
+  ? [
+      'https://sleeve-spotify-gallery.vercel.app',
+      'https://sleeve-spotify-gallery-rgzg3q4z2-mocomegane.vercel.app',
+      'https://sleeve-spotify-gallery-git-main-mocomegane.vercel.app'
+    ]
   : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:8080'];
 
 // フロントエンドURLが設定されている場合は追加
