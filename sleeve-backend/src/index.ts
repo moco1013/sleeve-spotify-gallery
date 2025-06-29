@@ -17,10 +17,17 @@ console.log('SPOTIFY_CLIENT_SECRET:', process.env.SPOTIFY_CLIENT_SECRET ? 'SET' 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? ['https://sleeve-frontend.vercel.app']
+  : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:8080'];
+
+// フロントエンドURLが設定されている場合は追加
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, 'https://sleeve-frontend.vercel.app'] 
-    : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:8080'],
+  origin: allowedOrigins,
   credentials: true,
 }));
 
