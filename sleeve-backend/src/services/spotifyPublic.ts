@@ -104,55 +104,72 @@ export class SpotifyPublicService {
   }
 
   async getNewReleases(limit = 20, offset = 0): Promise<SpotifySearchResponse> {
-    const token = await this.getAccessToken();
+    console.log('🎵 getNewReleases called with limit:', limit, 'offset:', offset);
     
-    // より多くのアルバムを取得してフィルター後に十分な数を確保
-    const fetchLimit = Math.min(limit * 2, 50);
+    try {
+      const token = await this.getAccessToken();
+      console.log('✅ Token obtained successfully');
+      
+      // より多くのアルバムを取得してフィルター後に十分な数を確保
+      const fetchLimit = Math.min(limit * 2, 50);
     
-    const response = await axios.get('https://api.spotify.com/v1/browse/new-releases', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      params: {
-        limit: fetchLimit,
-        offset,
-        country: 'JP', // 日本の新着アルバム
-      },
-    });
+      const response = await axios.get('https://api.spotify.com/v1/browse/new-releases', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+        params: {
+          limit: fetchLimit,
+          offset,
+          country: 'JP', // 日本の新着アルバム
+        },
+      });
+      
+      console.log('✅ Spotify API response received, albums count:', response.data.albums.items.length);
 
-    // アーティストのpopularityデータを取得するため、各アルバムのアーティスト情報を詳細取得
-    const albums = response.data.albums.items;
-    const enhancedAlbums = await Promise.all(
-      albums.map(async (album: any) => {
-        try {
-          // アーティストの詳細情報を取得
-          const artistDetails = await Promise.all(
-            album.artists.map(async (artist: any) => {
-              const artistResponse = await axios.get(`https://api.spotify.com/v1/artists/${artist.id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              return { ...artist, popularity: artistResponse.data.popularity };
-            })
-          );
-          return { ...album, artists: artistDetails };
-        } catch (error) {
-          // エラーの場合は元のアルバムデータを返す
-          return album;
+      // アーティストのpopularityデータを取得するため、各アルバムのアーティスト情報を詳細取得
+      const albums = response.data.albums.items;
+      console.log('🔍 Starting to enhance albums with artist details...');
+      
+      const enhancedAlbums = await Promise.all(
+        albums.map(async (album: any) => {
+          try {
+            // アーティストの詳細情報を取得
+            const artistDetails = await Promise.all(
+              album.artists.map(async (artist: any) => {
+                const artistResponse = await axios.get(`https://api.spotify.com/v1/artists/${artist.id}`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+                });
+                return { ...artist, popularity: artistResponse.data.popularity };
+              })
+            );
+            return { ...album, artists: artistDetails };
+          } catch (error) {
+            console.warn('⚠️ Error enhancing album:', album.name, error);
+            // エラーの場合は元のアルバムデータを返す
+            return album;
+          }
+        })
+      );
+
+      console.log('✅ Albums enhanced, applying popularity filter...');
+      
+      // popularityでフィルター
+      const filteredAlbums = this.filterByPopularity(enhancedAlbums, 30);
+      
+      console.log('✅ Filtered albums count:', filteredAlbums.length);
+      
+      // 元のレスポンス構造を維持
+      return {
+        ...response.data,
+        albums: {
+          ...response.data.albums,
+          items: filteredAlbums.slice(0, limit)
         }
-      })
-    );
-
-    // popularityでフィルター
-    const filteredAlbums = this.filterByPopularity(enhancedAlbums, 30);
-    
-    // 元のレスポンス構造を維持
-    return {
-      ...response.data,
-      albums: {
-        ...response.data.albums,
-        items: filteredAlbums.slice(0, limit)
-      }
-    };
+      };
+    } catch (error) {
+      console.error('❌ Error in getNewReleases:', error);
+      throw error;
+    }
   }
 
   async getFeaturedPlaylists(limit = 20, offset = 0): Promise<any> {
