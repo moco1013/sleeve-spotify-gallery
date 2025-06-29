@@ -129,7 +129,6 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
             key={theme.id}
             active={currentTheme === theme.id}
             onClick={(e) => handleButtonClick(e, theme.id)}
-            onTouchStart={(e) => e.preventDefault()}
           >
             <span style={{ marginRight: '6px' }}>{theme.emoji}</span>
             {theme.label}
@@ -144,7 +143,6 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
               key={genre}
               active={currentSubTheme === genre}
               onClick={(e) => handleButtonClick(e, 'genre', genre)}
-              onTouchStart={(e) => e.preventDefault()}
             >
               {genre}
             </MoodButton>
@@ -159,7 +157,6 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({
               key={mood.id}
               active={currentSubTheme === mood.id}
               onClick={(e) => handleButtonClick(e, 'mood', mood.id)}
-              onTouchStart={(e) => e.preventDefault()}
             >
               <span style={{ marginRight: '4px' }}>{mood.emoji}</span>
               {mood.label}
