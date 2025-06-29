@@ -280,16 +280,16 @@ export class SpotifyPublicService {
     const fetchLimit = Math.min(limit * 2, 50);
     
     const moodQueries: { [key: string]: string } = {
-      'chill': 'genre:ambient OR genre:lo-fi OR genre:chillout',
-      'party': 'genre:dance OR genre:electronic OR genre:party',
-      'workout': 'genre:electronic OR genre:rock OR genre:hip-hop',
-      'focus': 'genre:classical OR genre:ambient OR genre:instrumental',
-      'sleep': 'genre:ambient OR genre:new-age OR genre:classical',
-      'happy': 'genre:pop OR genre:indie-pop OR genre:dance',
-      'sad': 'genre:indie OR genre:alternative OR genre:folk'
+      'chill': 'chill ambient lo-fi',
+      'party': 'party dance electronic',
+      'workout': 'workout electronic rock',
+      'focus': 'focus classical instrumental',
+      'sleep': 'sleep ambient relaxing',
+      'happy': 'happy pop upbeat',
+      'sad': 'sad melancholy emotional'
     };
     
-    const query = moodQueries[mood] || 'genre:pop';
+    const query = moodQueries[mood] || 'pop';
     
     const response = await axios.get('https://api.spotify.com/v1/search', {
       headers: {
