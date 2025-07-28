@@ -1,10 +1,8 @@
 import axios from 'axios';
 import { SpotifySearchResponse, SpotifyAlbum } from '../types';
+import { getSafeEnvVar } from '../utils/securityConfig';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://sleeve-spotify-gallery-production.up.railway.app';
-console.log('API_BASE_URL:', API_BASE_URL);
-console.log('Environment variables:', process.env);
-console.log('Calling API with full URL:', `${API_BASE_URL}/api/public/albums/new-releases`);
+const API_BASE_URL = getSafeEnvVar('REACT_APP_API_BASE_URL') || 'https://sleeve-spotify-gallery-production.up.railway.app';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
